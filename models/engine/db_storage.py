@@ -12,7 +12,6 @@ class DBStorage:
     __session = None
 
     def __init__(self):
-        """Create a new engine instance and session."""
 
         user = os.getenv('HBNB_MYSQL_USER')
         password = os.getenv('HBNB_MYSQL_PWD')
@@ -28,20 +27,20 @@ class DBStorage:
         self.__session = scoped_session(sessionmaker(bind=self.__engine, expire_on_commit=False))
 
         def all(self, cls=None):
-        my_dict = {}
-        if cls:
-            query_result = self.__session.query(cls).all()
-            for obj in query_result:
-                key = "{}.{}".format(obj.__class__.__name__, obj.id)
-                my_dict[key] = obj
-        else:
-            classes = [User, State, City, Amenity, Place, Review]
-            for cls in classes:
+            my_dict = {}
+            if cls:
                 query_result = self.__session.query(cls).all()
                 for obj in query_result:
                     key = "{}.{}".format(obj.__class__.__name__, obj.id)
                     my_dict[key] = obj
-        return my_dict
+            else:
+                classes = [User, State, City, Amenity, Place, Review]
+                for cls in classes:
+                    query_result = self.__session.query(cls).all()
+                    for obj in query_result:
+                        key = "{}.{}".format(obj.__class__.__name__, obj.id)
+                        my_dict[key] = obj
+            return my_dict
 
         def new(self, obj):
             self.__session.add(obj)
@@ -54,6 +53,6 @@ class DBStorage:
                 self.__session.delete(obj)
 
         def reload(self):
-        Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        self.__session = scoped_session(session_factory)
+            Base.metadata.create_all(self.__engine)
+            session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+            self.__session = scoped_session(session_factory)
