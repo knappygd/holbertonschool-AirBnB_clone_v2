@@ -9,8 +9,9 @@ from models.city import City
 class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
+    id = Column(String(60), primary_key=True)
     name = Column(String(128), nullable=False)
-    cities = relationship("City", cascade="all, delete-orphan", backref="state")
+    
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
