@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
+from models.engine.file_storage import storage
 from models.review import Review
 from models.amenity import Amenity
 # from models.base_model import Base
@@ -36,7 +37,7 @@ class Place(BaseModel, Base):
     """ A place to stay """
     __tablename__ = "places"
     id = Column(String(60), primary_key=True)
-    city_id = Column(String(60), ForeignKey('cities.id') ,nullable=False)
+    city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
     user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
     name = Column(String(128), nullable=False)
     description = Column(String(1024))
@@ -48,8 +49,6 @@ class Place(BaseModel, Base):
     longitude = Column(Float)
     amenity_ids = []
     reviews = relationship("Review", backref="place", cascade="delete")
-    
-
 
     @property
     def review(self):
