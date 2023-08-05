@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from models import storage
 from models.review import Review
 from models.amenity import Amenity
 # from models.base_model import Base
@@ -53,6 +52,7 @@ class Place(BaseModel, Base):
     @property
     def review(self):
         """Returns the list of Review instances."""
+        from models import storage
         reviews = []
         for rev in list(storage.all(Review).values()):
             if rev.place_id == self.id:
@@ -61,6 +61,7 @@ class Place(BaseModel, Base):
 
     @property
     def amenities(self):
+        from models import storage
         amenities = []
         for amenity in list(storage.all(Amenity).values()):
             if amenity.id == self.amenity_ids:
