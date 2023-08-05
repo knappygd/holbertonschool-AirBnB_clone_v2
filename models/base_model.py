@@ -51,8 +51,9 @@ class BaseModel:
 
         dictionary = self.__dict__.copy()
         dictionary.update(self.__dict__)
-        dictionary.update({'__class__':
-                          (str(type(self)).split('.')[-1]).split('\'')[0]})
+        # dictionary.update({'__class__':
+        #                  (str(type(self)).split('.')[-1]).split('\'')[0]})
+        dictionary["__class__"] = str(type(self).__name__)
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
         dictionary.pop('_sa_instance_state', None)
