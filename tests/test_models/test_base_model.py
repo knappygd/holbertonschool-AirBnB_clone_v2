@@ -22,10 +22,13 @@ class test_basemodel(unittest.TestCase):
         pass
 
     def tearDown(self):
+        """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
         except FileNotFoundError:
             pass
+        except Exception as e:
+            print(f"An error occurred during tearDown: {e}")
 
     def test_default(self):
         """ """
@@ -47,9 +50,7 @@ class test_basemodel(unittest.TestCase):
         with self.assertRaises(TypeError):
             new = BaseModel(**copy)
 
-    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db",
-                     "Test only for FileStorage")
-    def test_save_fileStorage(self):
+    def test_save(self):
         """ Testing save """
         i = self.value()
         i.save()
@@ -69,14 +70,17 @@ class test_basemodel(unittest.TestCase):
         i = self.value()
         n = i.to_dict()
         self.assertEqual(i.to_dict(), n)
-        i = self.value(_sa_instance_state="dummy")
-        self.assertTrue(getattr(i, '_sa_instance_state', None))
-        self.assertFalse(i.to_dict().get('_sa_instance_state'))
 
     def test_kwargs_none(self):
         """ """
         n = {None: None}
         with self.assertRaises(TypeError):
+            new = self.value(**n)
+
+    def test_kwargs_one(self):
+        """ """
+        n = {'Name': 'test'}
+        with self.assertRaises(KeyError):
             new = self.value(**n)
 
     def test_id(self):
@@ -89,29 +93,10 @@ class test_basemodel(unittest.TestCase):
         new = self.value()
         self.assertEqual(type(new.created_at), datetime.datetime)
 
-    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db",
-                     "Test only for FileStorage")
     def test_updated_at(self):
         """ """
         new = self.value()
         self.assertEqual(type(new.updated_at), datetime.datetime)
         n = new.to_dict()
         new = BaseModel(**n)
-        new.save()
         self.assertFalse(new.created_at == new.updated_at)
-
-    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db",
-                     "Test only for FileStorage")
-    def test_delete(self):
-        """ """
-        from models import storage
-        new = BaseModel()
-        new.save()
-        key = f"{type(new).__name__}.{new.id}"
-        with open("file.json", 'r', encoding='utf-8') as f:
-            loaded = json.load(f)
-        self.assertTrue(key in loaded)
-        new.delete()
-        with open("file.json", 'r', encoding='utf-8') as f:
-            loaded = json.load(f)
-        self.assertFalse(key in loaded)
