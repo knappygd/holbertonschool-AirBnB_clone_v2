@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 """ Module for testing file storage"""
+
+
 import unittest
 from models.base_model import BaseModel
 from models import storage
 import os
 
-
+@unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db', 'skip')
 class test_fileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 
@@ -31,6 +33,8 @@ class test_fileStorage(unittest.TestCase):
     def test_new(self):
         """ New object is correctly added to __objects """
         new = BaseModel()
+        storage.new(new)
+        storage.save()
         for obj in storage.all().values():
             temp = obj
         self.assertTrue(temp is obj)
@@ -63,6 +67,7 @@ class test_fileStorage(unittest.TestCase):
     def test_reload(self):
         """ Storage file is successfully loaded to __objects """
         new = BaseModel()
+        storage.new(new)
         storage.save()
         storage.reload()
         for obj in storage.all().values():
@@ -97,6 +102,8 @@ class test_fileStorage(unittest.TestCase):
     def test_key_format(self):
         """ Key is properly formatted """
         new = BaseModel()
+        storage.new(new)
+        storage.save()
         _id = new.to_dict()['id']
         for key in storage.all().keys():
             temp = key
@@ -107,3 +114,23 @@ class test_fileStorage(unittest.TestCase):
         from models.engine.file_storage import FileStorage
         print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
+    def test_create_state(self):
+        """ State creation """
+        from models.state import State
+        state = State(name='Florida')
+        self.assertEqual(str(state.name), 'Florida')
+
+    def test_create_City(self):
+        """ City creation (in a state) """
+        from models.state import State
+        from models.city import City
+        state = State(name='Florida')
+        city = City(name="Miami", state_id=state.id)
+        self.assertEqual(city.name, 'Miami')
+
+    def test_create_User(self):
+        """ User creation """
+        from models.user import User
+        user = User(email='sba@hbtn.com', password='pwd')
+        self.assertEqual(user.email, 'sba@hbtn.com')
