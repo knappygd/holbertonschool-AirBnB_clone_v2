@@ -3,7 +3,6 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
-import models
 from models.city import City
 
 class State(BaseModel, Base):
@@ -15,6 +14,8 @@ class State(BaseModel, Base):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+    
+    import models
 
     if models.storage_type != "db":
         @property
