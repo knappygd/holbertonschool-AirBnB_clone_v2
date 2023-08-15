@@ -49,7 +49,8 @@ class FileStorage:
             'State': State, 'City': City, 'Amenity': Amenity,
             'Review': Review
         }
-        if os.path.exists(FileStorage.__file_path) and os.path.getsize(FileStorage.__file_path) > 0:
+        if os.path.exists(FileStorage.__file_path) and \
+                os.path.getsize(FileStorage.__file_path) > 0:
             try:
                 with open(FileStorage.__file_path, 'r') as f:
                     temp = json.load(f)
