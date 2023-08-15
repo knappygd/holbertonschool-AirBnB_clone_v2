@@ -11,7 +11,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 
-
 class DBStorage:
 
     __engine = None
@@ -36,7 +35,8 @@ class DBStorage:
         from models.user import User
         from models.state import State
         Base.metadata.create_all(self.__engine)
-        self.__session = scoped_session(sessionmaker(bind=self.__engine, expire_on_commit=False))
+        self.__session = scoped_session(sessionmaker(
+            bind=self.__engine, expire_on_commit=False))
 
     def all(self, cls=None):
         my_dict = {}
@@ -59,12 +59,16 @@ class DBStorage:
 
     def save(self):
         self.__session.commit()
-        
+
     def delete(self, obj=None):
         if obj:
             self.__session.delete(obj)
 
     def reload(self):
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        session_factory = sessionmaker(
+            bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(session_factory)
+
+    def close(self):
+        self.__session.close()
