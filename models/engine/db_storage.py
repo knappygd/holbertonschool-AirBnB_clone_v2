@@ -41,17 +41,18 @@ class DBStorage:
             bind=self.__engine, expire_on_commit=False))
 
     def all(self, cls=None):
-        objects = {}
-        if cls is not None:
-            for instance in self.__session.query(cls):
-                objects[cls.__name__ + '.' + instance.id] = instance
-            return objects
+        if cls is None:
+            objs = self.__session.query(State).all()
+            objs.extend(self.__session.query(City).all())
+            objs.extend(self.__session.query(User).all())
+            objs.extend(self.__session.query(Place).all())
+            objs.extend(self.__session.query(Review).all())
+            objs.extend(self.__session.query(Amenity).all())
         else:
-            classes = ["Amenity", "City", "Place", "Review", "State", "User"]
-            for i in classes:
-                for instance in self.__session(i):
-                    objects[i + '.' + instance.id] = instance
-            return objects
+            if type(cls) == str:
+                cls = eval(cls)
+            objs = self.__session.query(cls)
+        return {"{}.{}".format(type(o).__name__, o.id): o for o in objs}
 
     def new(self, obj):
         self.__session.add(obj)
